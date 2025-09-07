@@ -1,7 +1,9 @@
 import ReceivedMessage from "./ChatMessageReceived"
 import SentMessage from "./ChatMessageSent"
 
-const ChatMessages = () => {
+const ChatMessages = ({
+    messages = []
+}) => {
     return (
         <section>
             <SentMessage />
