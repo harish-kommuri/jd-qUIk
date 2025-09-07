@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@qUIk-UI/*": ["./src/*"]
+    }
+  }
+}

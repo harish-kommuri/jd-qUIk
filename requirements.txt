@@ -5,3 +5,4 @@ trl==0.11.4
 huggingface-hub==0.34.4
 langchain==0.2.17
 langchain-community==0.2.19
+ollama==0.5.3
