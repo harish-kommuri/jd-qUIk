@@ -1,6 +1,6 @@
 import React from "react";
 
-const apiBasePth =  "http://localhost:8081" // process.env.REACT_APP_UPLOAD_API_BASEPATH
+// const apiBasePth =  "http://localhost:8081" // process.env.REACT_APP_UPLOAD_API_BASEPATH
 
 function useSSE({ actions = [] } = {}) {
     const sseRef = React.useRef({});
@@ -12,7 +12,7 @@ function useSSE({ actions = [] } = {}) {
         reconnecting: false,
     });
 
-    const [_, reconnectHit] = React.useState(null)
+    // const [_, reconnectHit] = React.useState(null)
 
     const sse = sseRef.current;
 
@@ -33,9 +33,9 @@ function useSSE({ actions = [] } = {}) {
     const createServerSentEvents = (url) => {
         try {
             sseStateRef.current.url = url;
-            const evtSource = new EventSource(`${apiBasePth}/sse${url}?access_token=abcd`, {
+            const evtSource = new EventSource(url, {
                 // withCredentials: true,
-                rejectUnauthorized: false                
+                // rejectUnauthorized: false                
             });
 
             evtSource.onerror = (e) => {
@@ -58,21 +58,11 @@ function useSSE({ actions = [] } = {}) {
     }
 
     return {
-        connect: createServerSentEvents,
+        send: createServerSentEvents,
         close: () => {
             sse.close?.();
             sseRef.current = null;
             sseStateRef.current = { opened: false };
-        },
-        sendMessage: (data) => {
-            try {
-                console.log(data, sseRef.current);
-                if (sseRef.current?.CLOSED) {
-
-                }
-            } catch (e) {
-                console.log("Error while sending data through socket", e);
-            }
         },
         onError: (callback) => {
             addListener("error", callback)
@@ -95,23 +85,23 @@ function useSSE({ actions = [] } = {}) {
         onClose: (callback) => {
             addListener("close", callback);
         },
-        reconnect: (duration = 3000) => {
-            if (sseStateRef.current.reconnecting) {
-                return;
-            }
+        // reconnect: (duration = 3000) => {
+        //     if (sseStateRef.current.reconnecting) {
+        //         return;
+        //     }
 
-            sseStateRef.current.reconnecting = true;
+        //     sseStateRef.current.reconnecting = true;
         
-            setTimeout(() => {
-                createServerSentEvents(sseStateRef.current.url);
-                Object.entries(callbacksRef.current).forEach(([event, callback]) => {
-                    addListener(event, callback);
-                });
+        //     setTimeout(() => {
+        //         createServerSentEvents(sseStateRef.current.url);
+        //         Object.entries(callbacksRef.current).forEach(([event, callback]) => {
+        //             addListener(event, callback);
+        //         });
 
-                sseStateRef.current.reconnecting = false;
-                reconnectHit(Math.random());
-            }, duration);
-        }
+        //         sseStateRef.current.reconnecting = false;
+        //         reconnectHit(Math.random());
+        //     }, duration);
+        // }
     }
 }
 
