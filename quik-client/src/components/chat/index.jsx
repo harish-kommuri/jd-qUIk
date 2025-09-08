@@ -1,11 +1,10 @@
 import React from "react";
-
-const { default: ChatFooter } = require("./ChatFooter");
-const { default: ChatMessages } = require("./ChatMessages");
+import ChatFooter from "./ChatFooter";
+import ChatMessages from "./ChatMessages";
 
 const ChatView = ({
     sendPrompt = () => { },
-    messages = [],
+    messages = {},
     thinking = false
 }) => {
     return (
@@ -38,6 +37,26 @@ const ChatView = ({
 
 .chat-container .chat-footer .chat-input {
     width: -webkit-fill-available;
+}
+
+.chat-container .chat-msg {
+    padding: 10px 20px;
+    max-width: 90%;
+    border-radius: 12px;
+    border: 1px solid gray;
+    margin: 10px 0;
+}
+
+.chat-container .chat-msg-list {
+    display: flex;
+    flex-flow: column;
+    overflow: auto;
+    height: calc(100% - 60px);
+}
+
+.chat-container .chat-msg-sent {
+    align-self: flex-end;
+    background-color: gray;
 }
             `}</style>
         </>

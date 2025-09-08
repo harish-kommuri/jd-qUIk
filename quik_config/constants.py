@@ -11,4 +11,4 @@ models_list = {
     }
 }
 
-model_selected = "qwen3-coder"
+model_selected = "qwen3-coder:30b"

@@ -4,8 +4,11 @@ import { useRouter } from "next/router"
 import ChatView from "@qUIk-UI/components/chat"
 import createMessage from "@qUIk-UI/utils/createMessage";
 import useWebSockets from "../../../hooks/useWebSocket";
+// import callThrottle from "@qUIk-UI/utils/throttle";
 
 const apiBasePath = "http://localhost:8081"
+
+// const throttle = callThrottle(200);
 
 
 const ChatPage = () => {
@@ -19,36 +22,50 @@ const ChatPage = () => {
     React.useEffect(() => {
         if (!chatId) { return; }
 
-        socket.connect("http://localhost:8081/chat/" + chatId);
+        socket.connect(apiBasePath + "/chat/" + chatId);
 
         return () => {
             socket.close();
         }
-    }, [chatId])
+    }, [chatId]);
 
-    socket.onMessage((e) => {
-        console.log(e);
+    socket.onMessage((data = {}) => {
+        const { id, type, value } = data;
+        const prevData = chatMessages[id] || {};
+
+        if (type === "part") {
+            prevData.messages.push(value || "\n");
+        } else if (type === "end") {
+            prevData.inProgress = false;
+            prevData.completed = true;
+            prevData.completedOn = new Date()
+        }
+
+        setChatMessages((prev) => ({ ...prev, [id]: prevData }));
     });
 
     const sendPrompt = (promptMessage = "") => {
-        console.log(chatId, promptMessage);
-
         if (!chatId || !promptMessage) {
             return;
         }
 
-        const { id: sentId, data: sentData } = createMessage([promptMessage], true);
+        const { id: sentId, data: sentData } = createMessage([promptMessage], {
+            sent: true,
+            completed: true,
+            completedOn: new Date()
+        });
+
         setChatMessages((prev) => ({ ...prev, [sentId]: sentData }));
-
-        const { id: receivedId, data: receivedData } = createMessage([], false, true);
+        
+        const { id: receivedId, data: receivedData } = createMessage([], {  inProgress: true });
         setChatMessages((prev) => ({ ...prev, [receivedId]: receivedData }));
-        setThinking(true);
 
-        console.log("Pushing to socket ... ");
+        setThinking(true);
 
         socket.send({
             action: "prompt",
-            message: promptMessage
+            message: promptMessage,
+            msgId: receivedId
         })
     }
 

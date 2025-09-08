@@ -1,7 +1,11 @@
-const SentMessage = () => {
+const SentMessage = ({
+    data = {}
+}) => {
+    console.log(data);
+
     return (
-        <div>
-            Message sent
+        <div className="chat-msg chat-msg-sent">
+            {data.messages}
         </div>
     )
 }

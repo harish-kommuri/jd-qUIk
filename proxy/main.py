@@ -1,11 +1,18 @@
-from fastapi import FastAPI, Request, WebSocket
-from fastapi.responses import StreamingResponse
+from fastapi import FastAPI, WebSocket
+from fastapi.middleware.cors import CORSMiddleware
 from ollama import AsyncClient
 from quik_config.constants import model_selected
 import json
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 async def get_chat_response(id, prompt, websocket: WebSocket):
     messages = [{
@@ -17,24 +24,28 @@ async def get_chat_response(id, prompt, websocket: WebSocket):
     }]
 
     async for part in await AsyncClient().chat(model=model_selected, messages=messages, stream=True):
-        await websocket.send_text(json.dumps({ "id": id, "type": "part", "value": part['message']['content'] }))
+        partvalue = part['message']['content']
+        await websocket.send_text(json.dumps({ "id": id, "type": "part", "value": partvalue }))
 
     await websocket.send_text(json.dumps({ "id": id, "type": "end", "value": "" }))
 
+
 @app.websocket("/chat/{chatid}")
 async def chat(
-    # chatId: str,
+    # chatid: str,
     websocket: WebSocket
 ):
-    await websocket.accept()
+    try:
+        await websocket.accept()
 
-    while True:
-        data = await websocket.receive_text()
-        payload = json.loads(data)
+        while True:
+            data = await websocket.receive_text()
+            payload = json.loads(data)
+            action = payload.get("action", "")
 
-        action = payload.get("action", "")
-
-        if action == "prompt":
-            print(data)
-            get_chat_response(payload["message"], websocket)
-
+            if action == "prompt":
+                await get_chat_response(payload["msgId"], payload["message"], websocket)
+    
+    except Exception as e:
+        print("Error in chat API", e)
+        return {}

@@ -2,7 +2,7 @@ import React from "react";
 
 // const apiBasePth =  "http://localhost:8081" // process.env.REACT_APP_UPLOAD_API_BASEPATH
 
-function useWebSockets({ url } = {}) {
+function useWebSockets() {
     const socketRef = React.useRef({});
     const callbacksRef = React.useRef({});
 
@@ -31,6 +31,10 @@ function useWebSockets({ url } = {}) {
                 }, 5000);
             }
 
+            Object.entries(callbacksRef.current).forEach(([eventName, callback]) => {
+                addListener(eventName, callback);
+            });
+
             socketRef.current = ws;
         } catch (e) {
             console.log(e);
@@ -47,11 +51,11 @@ function useWebSockets({ url } = {}) {
     }
 
     const addListener = (event, callback) => {
-        if (socket instanceof WebSocket) {
-            const prevCallback = callbacksRef.current[event];
-            (typeof prevCallback === "function") && socket.removeEventListener(event, prevCallback);
+        const prevCallback = callbacksRef.current[event];
+        callbacksRef.current[event] = callback;
 
-            callbacksRef.current[event] = callback;
+        if (socket instanceof WebSocket) {
+            (typeof prevCallback === "function") && socket.removeEventListener(event, prevCallback);
             socket.addEventListener(event, callback, false);
         }
     }
@@ -63,7 +67,6 @@ function useWebSockets({ url } = {}) {
             addListener("error", callback)
         },
         send: (data) => {
-            console.log(data, socket);
             if (socket instanceof WebSocket) {
                 socket.send(JSON.stringify(data))
             }
@@ -74,9 +77,7 @@ function useWebSockets({ url } = {}) {
                 try {
                     if (event.data?.length > 0) {
                         const data = JSON.parse(event.data);
-                        // if (!actions.length || actions.includes(data.type)) {
-                            callback(data, event);
-                        // }
+                        callback(data, event);
                     }
                 } catch (e) {
                     console.log(e);
