@@ -12,3 +12,4 @@ models_list = {
 }
 
 model_selected = "qwen3-coder:30b"
+embedding_model = "all-MiniLM-L6-v2"

@@ -3,15 +3,14 @@ import os
 from PyPDF2 import PdfReader
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import FAISS
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_huggingface import HuggingFaceEmbeddings
 
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+from quik_config.constants import embedding_model
 
+embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
 pdf_folder_path = str(Path.joinpath(Path.cwd(), "data"))
 pdfs = os.listdir(pdf_folder_path)
-
-print(pdf_folder_path)
 
 def extract_text_from_pdf(pdf_path):
     print("Reading PDF ------> ", pdf_path)

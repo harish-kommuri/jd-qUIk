@@ -1,24 +1,23 @@
 from fastapi import FastAPI, WebSocket, Request
 from fastapi.middleware.cors import CORSMiddleware
-from ollama import AsyncClient
-from quik_config.constants import model_selected
-
-
+# from ollama import AsyncClient
+from quik_config.constants import model_selected, embedding_model
 
 from langchain.chains import RetrievalQA
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS
 from langchain_ollama.llms import OllamaLLM
-from langchain.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
 import json
+import asyncio
 from pathlib import Path
 
 abspath = str(Path.cwd().absolute())
 app = FastAPI()
 model = OllamaLLM(model=model_selected)
-embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-vectorstore = FAISS.load_local(abspath + "/model/RAG/faiss_index", embeddings, allow_dangerous_deserialization=True)
+embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
 
+vectorstore = FAISS.load_local(abspath + "/model/RAG/faiss_index", embeddings, allow_dangerous_deserialization=True)
 qa = RetrievalQA.from_chain_type(llm=model, retriever=vectorstore.as_retriever())
 
 app.add_middleware(
@@ -54,8 +53,10 @@ async def get_chat_response(id, prompt, websocket: WebSocket):
     #     "content": prompt
     # }]
 
-    partvalue = await qa.arun(f"You are a pro in web development nad have enormous knowledge in React.js, tailwind and CSS. Please give only coding response. \n {prompt}")
-    await websocket.send_text(json.dumps({ "id": id, "type": "part", "value": partvalue }))
+    query = f"You are a pro in web development nad have enormous knowledge in React.js, tailwind and CSS. Please give only coding response. \n {prompt}"
+
+    async for partvalue in qa.astream():
+        await websocket.send_text(json.dumps({ "id": id, "type": "part", "value": partvalue }))
 
     # async for part in await AsyncClient().chat(model=model_selected, messages=messages, stream=True):
     #     partvalue = part['message']['content']
@@ -73,7 +74,7 @@ async def xhr_chat(
 
     print("text ---> ", text)
 
-    llm_resp = qa.run(f"You are a pro in web development nad have enormous knowledge in React.js, tailwind and CSS. Please give only coding response. \n {text}")
+    llm_resp = qa.invoke(f"You are a pro in web development nad have enormous knowledge in React.js, tailwind and CSS. Please give only coding response. \n {text}")
 
     return {"error": 0, "message": "Success", "data": llm_resp }
 
@@ -92,7 +93,7 @@ async def chat(
             action = payload.get("action", "")
 
             if action == "prompt":
-                await get_chat_response(payload["msgId"], payload["message"], websocket)
+                asyncio(get_chat_response(payload["msgId"], payload["message"], websocket))
     
     except Exception as e:
         print("Error in chat API", e)
