@@ -3,7 +3,7 @@ import { useRouter } from "next/router"
 
 import ChatView from "@qUIk-UI/components/chat"
 import createMessage from "@qUIk-UI/utils/createMessage";
-import useWebSockets from "../../../hooks/useWebSocket";
+import useSSE from "../../../hooks/useSSE";
 // import callThrottle from "@qUIk-UI/utils/throttle";
 
 const apiBasePath = "http://localhost:8081"
@@ -17,19 +17,19 @@ const ChatPage = () => {
     const [chatMessages, setChatMessages] = React.useState({});
     const [thinking, setThinking] = React.useState(false);
 
-    const socket = useWebSockets();
+    const sse = useSSE();
 
     React.useEffect(() => {
         if (!chatId) { return; }
 
-        socket.connect(apiBasePath + "/chat/" + chatId);
+        sse.connect(apiBasePath + "/chat/sse/" + chatId);
 
         return () => {
-            socket.close();
+            sse.close();
         }
     }, [chatId]);
 
-    socket.onMessage((data = {}) => {
+    sse.onMessage((data = {}) => {
         const { id, type, value } = data;
         const prevData = chatMessages[id] || {};
 
@@ -62,7 +62,7 @@ const ChatPage = () => {
 
         setThinking(true);
 
-        socket.send({
+        sse.send(chatId, {
             action: "prompt",
             message: promptMessage,
             msgId: receivedId
