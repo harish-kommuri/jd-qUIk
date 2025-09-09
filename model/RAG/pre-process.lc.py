@@ -14,6 +14,7 @@ pdfs = os.listdir(pdf_folder_path)
 print(pdf_folder_path)
 
 def extract_text_from_pdf(pdf_path):
+    print("Reading PDF ------> ", pdf_path)
     reader = PdfReader(pdf_path)
     text = ""
     for page_num in range(len(reader.pages)):
@@ -31,14 +32,15 @@ def extract_text_from_pdf(pdf_path):
 
 
 for pdfname in pdfs:
-    pdfpath = pdf_folder_path + "/" + pdfname
-    pdf_text = extract_text_from_pdf(pdfpath)
+    if pdfname.endswith(".pdf"):
+        pdfpath = pdf_folder_path + "/" + pdfname
+        pdf_text = extract_text_from_pdf(pdfpath)
 
-    splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
-    chunks = splitter.create_documents([pdf_text])
+        splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+        chunks = splitter.create_documents([pdf_text])
 
-    vectorstore = FAISS.from_documents(chunks, embeddings)
-    vectorstore.save_local("faiss_index")
+        vectorstore = FAISS.from_documents(chunks, embeddings)
+        vectorstore.save_local("faiss_index")
 
 
 

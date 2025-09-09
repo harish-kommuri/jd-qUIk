@@ -10,7 +10,7 @@ const UserProfileCard = ({ name, id, profilePicture }) => {
             boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
             maxWidth: '300px'
         }}>
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', display: "flex" }}>
                 <img src={profilePicture} alt={name} style={{
                     width: '100px',
                     height: '100px',
@@ -19,6 +19,7 @@ const UserProfileCard = ({ name, id, profilePicture }) => {
                     marginBottom: '15px'
                 }}
                 />
+                <div style={{ marginLeft: "10px" }}>
                 <h3 style={{
                     color: '#111111',
                     margin: '10px 0'
@@ -31,6 +32,7 @@ const UserProfileCard = ({ name, id, profilePicture }) => {
                     borderRadius: '4px',
                     display: 'inline-block'
                 }}>ID: {id}</p>
+                </div>
             </div>
         </div>
     )

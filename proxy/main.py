@@ -48,13 +48,13 @@ app.add_middleware(
 async def get_chat_response(id, prompt, websocket: WebSocket):
     # messages = [{
     #     "role": "system",
-    #     "content": "You are a pro in web development nad have a enormous knowledge in React.js. Please give only coding response"
+    #     "content": "You are a pro in web development nad have enormous knowledge in React.js. Please give only coding response"
     # }, {
     #     "role": "user",
     #     "content": prompt
     # }]
 
-    partvalue = await qa.arun(prompt)
+    partvalue = await qa.arun(f"You are a pro in web development nad have enormous knowledge in React.js, tailwind and CSS. Please give only coding response. \n {prompt}")
     await websocket.send_text(json.dumps({ "id": id, "type": "part", "value": partvalue }))
 
     # async for part in await AsyncClient().chat(model=model_selected, messages=messages, stream=True):
@@ -73,7 +73,7 @@ async def xhr_chat(
 
     print("text ---> ", text)
 
-    llm_resp = qa.run(text)
+    llm_resp = qa.run(f"You are a pro in web development nad have enormous knowledge in React.js, tailwind and CSS. Please give only coding response. \n {text}")
 
     return {"error": 0, "message": "Success", "data": llm_resp }
 
