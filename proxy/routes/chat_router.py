@@ -70,7 +70,7 @@ async def create_stream(id: str):
     
 
 
-async def get_llm_response(id, prompt):
+async def get_llm_response(id, msgid, prompt):
     # messages = [{
     #     "role": "system",
     #     "content": "You are a pro in web development nad have enormous knowledge in React.js. Please give only coding response"
@@ -84,10 +84,11 @@ async def get_llm_response(id, prompt):
 
     async for partvalue in qa.astream(query):
         result = partvalue.get("result", "")
-        await queue.put({ "id": id, "type": "part", "value": result })
+        print(89, result)
+        await queue.put({ "id": id, "msgid": msgid, "type": "part", "value": result })
         # await websocket.send_text(json.dumps({ "id": id, "type": "part", "value": result }))
     
-    await queue.put({ "id": id, "type": "end", "value": "" })
+    await queue.put({ "id": id, "msgid": msgid, "type": "end", "value": "" })
 
     # async for part in await AsyncClient().chat(model=model_selected, messages=messages, stream=True):
     #     partvalue = part['message']['content']
@@ -105,7 +106,12 @@ async def xhr_chat(
     text = body.get("text", None)
 
     llm_resp = qa.invoke(f"You are a pro in web development nad have enormous knowledge in React.js, tailwind and CSS. Please give only coding response. \n {text}")
-    return {"error": 0, "message": "Success", "data": llm_resp }
+    result = llm_resp.get("result", "")
+
+    if len(result) > 0:
+        return {"error": 0, "message": "Success", "data": result }
+    else:
+        return {"error": 1, "message": "Failed", "data": "" }
 
 
 @chat_router.get("/sse/{chatid}")
@@ -122,14 +128,15 @@ async def chat(
         print("Error in sse/chat API", e)
 
 
-@chat_router.post("/sse/{chatid}/prompt")
+@chat_router.post("/sse/{chatid}/prompt/{msgid}")
 async def prompt(
     chatid: str,
+    msgid: str,
     request: Request
 ):
     body = await request.json()
     text = body.get("text", "")
 
-    get_llm_response(chatid, text)
+    await get_llm_response(chatid, msgid, text)
 
     return {}
