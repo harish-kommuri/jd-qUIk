@@ -1,4 +1,4 @@
-from fastapi import Request
+from fastapi import Request, Form, UploadFile
 from fastapi.routing import APIRouter
 from fastapi.responses import StreamingResponse
 
@@ -12,7 +12,6 @@ import asyncio
 from pathlib import Path
 from typing import Dict
 from queue import Queue
-from threading import Thread
 
 from quik_config.constants import model_selected, embedding_model
 
@@ -100,19 +99,19 @@ async def get_llm_response(id, msgid, prompt):
 @chat_router.post("/synchronous/{chatid}")
 async def xhr_chat(
     # chatid: str,
-    request: Request
+    type: str = Form(default="text"),
+    value: str | UploadFile = Form(...)
 ):
-    body = await request.json()
-    text = body.get("text", None)
+    if type == "text":
+        llm_resp = qa.invoke(f"You are a pro in web development nad have enormous knowledge in React.js, tailwind and CSS. Please give only coding response. \n {value}")
+        result = llm_resp.get("result", "")
 
-    llm_resp = qa.invoke(f"You are a pro in web development nad have enormous knowledge in React.js, tailwind and CSS. Please give only coding response. \n {text}")
-    result = llm_resp.get("result", "")
-
-    if len(result) > 0:
-        return {"error": 0, "message": "Success", "data": result }
+        if len(result) > 0:
+            return {"error": 0, "message": "Success", "data": result }
+        else:
+            return {"error": 1, "message": "Failed", "data": "" }
     else:
-        return {"error": 1, "message": "Failed", "data": "" }
-
+        pass
 
 @chat_router.get("/sse/{chatid}")
 async def chat(

@@ -125,9 +125,11 @@ const ChatPage = () => {
         //     text: promptMessage
         // });
 
-        const resp = await xhr.post(apiBasePath + "/synchronous/" + chatId, {
-            text: postMessage
-        });
+        const formData = new FormData();
+
+        formData.append("type", type);
+        formData.append("value", postMessage);
+        const resp = await xhr.post(apiBasePath + "/synchronous/" + chatId, formData);
 
         if (resp.data?.error > 0) {
             msgApi.error(resp.data.message || "Something went wrong.")
@@ -143,7 +145,8 @@ const ChatPage = () => {
                 }
             }));
         }
-        
+
+        setThinking(false);
 
         // sse.send(chatId, {
         //     action: "prompt",
