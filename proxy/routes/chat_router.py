@@ -8,6 +8,7 @@ from langchain_ollama.llms import OllamaLLM
 from langchain.chains import RetrievalQA
 
 import json
+import asyncio
 from pathlib import Path
 from typing import Dict
 from queue import Queue
@@ -42,12 +43,12 @@ chat_router = APIRouter(
 
 #     await websocket.send_text(json.dumps({ "id": id, "type": "end", "value": "" }))
 
-async def create_stream(id: str, request: Request):
+async def create_stream(id: str):
     q = chat_queues.get(id, None)
 
-    if not isinstance(q, Queue) or q.is_shutdown():
-        q = Queue()
-        
+    if not isinstance(q, asyncio.Queue) or q.is_shutdown():
+        q = asyncio.Queue()
+    
     chat_queues[id] = q
 
     try:
@@ -55,9 +56,11 @@ async def create_stream(id: str, request: Request):
             # if await request.is_disconnected():
             #     break
 
-            message = await q.get()
+            message = await asyncio.wait_for(q.get(), timeout=15.0)
             print("Message ---> ", message)
             yield f"data: {json.dumps(message)}\n\n"
+    except asyncio.TimeoutError:
+        yield ": keep-alive\n\n"
     except Exception as e:
         print("Error while processing queue.", e)
     
@@ -108,11 +111,11 @@ async def xhr_chat(
 @chat_router.get("/sse/{chatid}")
 async def chat(
     chatid: str,
-    request: Request
+    # request: Request
 ):
     try:
         return StreamingResponse(
-            create_stream(chatid, request),
+            create_stream(chatid),
             media_type="text/event-stream"
         )
     except Exception as e:

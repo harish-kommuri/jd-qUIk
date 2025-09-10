@@ -21,9 +21,11 @@ function useSSE() {
         console.log({ url });
         try {
             sseStateRef.current.url = url;
-            const es = new EventSource(url);
+            const es = new EventSource(url, {
+                withCredentials: true
+            });
 
-            // es.onerror = (e) => { console.log(e); }
+            es.onerror = (e) => { console.log(e); }
             // es.onclose = () => {
             //     setTimeout(() => {
             //         connectSSE(url);
