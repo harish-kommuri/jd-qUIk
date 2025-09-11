@@ -136,6 +136,8 @@ const ChatPage = () => {
 
         const resp = await xhr.post(apiBasePath + "/ragc/" + chatId, formData);
 
+        console.log(resp.data);
+
         if (resp.data?.error > 0) {
             msgApi.error(resp.data.message || "Something went wrong.")
         } else {
