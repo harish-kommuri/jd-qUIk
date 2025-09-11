@@ -12,7 +12,7 @@ from typing import Annotated
 from uuid import uuid4
 
 from pathlib import Path
-from quik_config.constants import embedding_model, llm_model, lll_vision_model
+from quik_config.constants import embedding_model, llm_model, llm_vision_model
 
 model_abspath = str(Path.cwd().absolute()) + "/model/RAGC"
 embedder = SentenceTransformer(embedding_model)  # lightweight & good
@@ -78,19 +78,20 @@ def image_handling(file: UploadFile, query: str):
         with open(filepath, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        response = ollama.chat(model=lll_vision_model, messages=[
+        response = ollama.chat(model=llm_vision_model, messages=[
             {
                 "role": "system",
-                "content": "You are a pro in web development nad have enormous knowledge in React.js, tailwind and CSS. Please give only coding response."
+                "content": "You are a pro at analysing images and best at describing images."
             },
             {
                 "role": "user",
-                "content": get_prompt(query or "Please give the best HTML for attached image."),
+                "content": "After analysing image if it is a web template or a web page, Please describe the design. Otherwise reply with text **NO_WEB**",
                 "images": [filepath]
             }
         ])
 
         llm_resp = response
+        print(94, llm_response)
     except Exception as e:
         print("Error while reading image", e)
     finally:
