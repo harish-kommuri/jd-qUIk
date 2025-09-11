@@ -8,7 +8,7 @@ import xhr from "@qUIk-UI/utils/xhr";
 // import useSSE from "../../../hooks/useSSE";
 // import callThrottle from "@qUIk-UI/utils/throttle";
 
-const apiBasePath = "http://localhost:8081/chat"
+const apiBasePath = "http://localhost:8081"
 
 // const throttle = callThrottle(200);
 
@@ -104,7 +104,7 @@ const ChatPage = () => {
     // }, [chatMessages, startListening]);
 
     const sendPrompt = async (payload = {}) => {
-        const { type = "", value: promptMessage = "" } = payload;
+        const { type = "", value: promptMessage = "", img } = payload;
 
         if (!chatId || !promptMessage) { return; }
 
@@ -128,8 +128,13 @@ const ChatPage = () => {
         const formData = new FormData();
 
         formData.append("type", type);
-        formData.append("value", postMessage);
-        const resp = await xhr.post(apiBasePath + "/synchronous/" + chatId, formData);
+        formData.append("query", promptMessage)
+
+        if (type === "image") {
+            formData.append("img", img)
+        }
+
+        const resp = await xhr.post(apiBasePath + "/ragc/" + chatId, formData);
 
         if (resp.data?.error > 0) {
             msgApi.error(resp.data.message || "Something went wrong.")

@@ -58,6 +58,20 @@ const ChatView = ({
     align-self: flex-end;
     background-color: gray;
 }
+
+.image_container {
+    position: absolute;
+    padding: 10px;
+    bottom: 100%;
+    left: 0;
+    width: 100px;
+}
+
+.img_close_icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
             `}</style>
         </>
     );

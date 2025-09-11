@@ -1,4 +1,4 @@
-import { SendOutlined, PictureFilled } from "@ant-design/icons";
+import { SendOutlined, PictureFilled, CloseCircleOutlined } from "@ant-design/icons";
 
 import { Button, Upload } from "antd";
 import React from "react";
@@ -8,15 +8,25 @@ const ChatFooter = ({
     thinking = false
 }) => {
     const [inputValue, setInputValue] = React.useState("")
+    const [imgSelected, setImgSelected] = React.useState({ path: null, file: null })
 
     return (
         <div className="chat-footer">
-            <input className="chat-input" name="prompt" value={inputValue} placeholder="What's in your mind!" onChange={(e) => {
+            {imgSelected.path ? (
+                <div className="image_container">
+                    <img alt="" src={imgSelected.path} title="" />
+                    <CloseCircleOutlined className="img_close_icon" onClick={() => {
+                        setImgSelected({ path: null, file: null });
+                    }} />
+                </div>
+            ) : null}
+            <input className="chat-input" name="prompt" value={inputValue} placeholder={imgSelected.path ? "Describe about image (Optional)" : "What's in your mind!"} onChange={(e) => {
                 setInputValue(e.target.value);
             }} />
             <Upload
             onChange={(e) => {
-                sendPrompt({ "type": "image", value: e.file });
+                const path = URL.createObjectURL(e.file);
+                setImgSelected({ path, file: e.file })
             }}
             showUploadList={false}
             beforeUpload={() => false}
@@ -27,7 +37,7 @@ const ChatFooter = ({
             </Upload>
             <Button>
                 <SendOutlined className="chat-send-button" onClick={() => {
-                    sendPrompt({ type: "text", value: inputValue });
+                    sendPrompt({ type: imgSelected.path ? "image" : "text", value: inputValue, img: imgSelected.file });
                 }} />
             </Button>
         </div>
