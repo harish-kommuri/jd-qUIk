@@ -11,6 +11,6 @@ models_list = {
     }
 }
 
-llm_model = "mistral:7b-instruct-v0.2-q2_K" # "qwen3-coder:30b"
+llm_model = "qwen3:32b" # "qwen3-coder:30b"
 llm_vision_model = "llava:7b"
 embedding_model = "all-MiniLM-L6-v2"
