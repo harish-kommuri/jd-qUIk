@@ -16,7 +16,7 @@ if not os.path.exists("faiss"):
 embedding_model = "all-MiniLM-L6-v2"
 
 embedder = SentenceTransformer(embedding_model)
-texts_folder_path = str(Path.joinpath(Path.cwd(), "data/texts"))
+texts_folder_path = str(Path.joinpath(Path.cwd(), "data/qwen-docs/txts"))
 texts = os.listdir(texts_folder_path)
 
 

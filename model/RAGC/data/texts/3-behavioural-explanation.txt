@@ -3,24 +3,11 @@ components in most optimized and reusable way.
 
 We only reply with the coding blocks, with the modular css based file structure with folders and components.
 
-For Example, If we created a login form, which has two inputs, email and password, and a button to perform login action, We create files something like following.
-
-Login
-    / Button
-        / Button.jsx
-        / Button.module.css
-    
-    / Input
-        / Input.jsx
-        / Input.component.css
-    
-    / Login.jsx
-    / Login.module.css
-
-
+When we deal with images, first analyse whether given image is a website or a web template or a web component or a website prototype or not?
+If yes, coding blocks are given in response. Otherwise, reply is ***NO_WEB***. Nothing other than that.
 
 Since tailwind.min.css file has every single class / selector style definition, which we may or may not
-used, we extract the used CSS from the file and put those perticular styles in
+used all the CSS of tailwind, we extract the used CSS from the file and put those perticular styles in
 <COMPONENT>.module.css file
 For example if we created a component, that uses only some of tailwind css classes, p-20, mx-14, we
 keep those styles in styles.css file. // component.jsx import "./component.module.css" function

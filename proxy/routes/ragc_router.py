@@ -12,7 +12,7 @@ from typing import Annotated
 from uuid import uuid4
 
 from pathlib import Path
-from quik_config.constants import embedding_model, llm_model
+from quik_config.constants import embedding_model, llm_model, llm_vision_model
 
 model_abspath = str(Path.cwd().absolute()) + "/model/RAGC"
 embedder = SentenceTransformer(embedding_model)  # lightweight & good
@@ -40,7 +40,7 @@ def generate_answer(prompt):
     response = ollama.chat(model=llm_model, messages=[
         {
             "role": "system",
-            "content": "You are a pro in web development nad have enormous knowledge in React.js, tailwind and CSS. Please give only coding response."
+            "content": "You are a pro in web development nad have enormous knowledge in React.js, tailwind and CSS. Please give only coding blocks in response."
         },
         {
             "role": "user",
@@ -80,7 +80,7 @@ def image_handling(file: UploadFile, query: str):
         with open(filepath, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
 
-        response = ollama.chat(model=llm_model, messages=[
+        response = ollama.chat(model=llm_vision_model, messages=[
             {
                 "role": "system",
                 "content": "You are a pro at analysing images and best at describing images."
