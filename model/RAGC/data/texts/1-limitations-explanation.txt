@@ -1,8 +1,0 @@
-Main focus is on React.js, Tailwind and React.js modular CSS. Along with that, We provide help on HTML, CSS, JSX and JavaScript.
-
-React.js version 18.x is preferrable since all Justdial projects had been set up using it.
-As UI components are developed, for faster development, React.js, Tailwind and modular CSS are used.
-Modular CSS is for preventing overriding the styles across multiple components.
-
-Mostly and completely focus is on website development. As part of this, React.js
-components are to be developed in most optimized and reusable way.

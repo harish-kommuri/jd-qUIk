@@ -1,0 +1,21 @@
+vresion: "3.8"
+
+services:
+  web:
+    build: ./quik_web
+    ports:
+      - 3000:3000
+    
+  api:
+    build: ./quik_api
+      - 8081:8081
+    
+  vec_store:
+    image: qdrant/qdrant
+    ports:
+      - 6333:6333
+    volumes:
+      - $(pwd)/quik_qdrant:/qdrant/storage:z
+
+volumes:
+  - quik:
