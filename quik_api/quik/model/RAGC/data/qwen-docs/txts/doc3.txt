@@ -1,0 +1,53 @@
+Title:
+Scalable React Component Architecture with Tailwind + CSS Modules
+
+Principles:
+1. Single Responsibility
+Each component should do one thing well.
+
+Button → handles button behavior and styling
+Card → wraps content with padding, border, shadow
+
+
+2. Props for Customization
+jsx
+<Button variant="danger" size="lg" disabled={loading}>
+  {loading ? 'Loading...' : 'Submit'}
+</Button>
+
+3. Composition Over Configuration
+Build higher-level components from smaller ones:
+
+jsx
+// Card.jsx
+import styles from './Card.module.css';
+
+const Card = ({ children, header, footer, className = '' }) => (
+  <div className={`${styles.card} ${className}`}>
+    {header && <div className="p-4 border-b">{header}</div>}
+    <div className="p-6">{children}</div>
+    {footer && <div className="p-4 border-t bg-gray-50">{footer}</div>}
+  </div>
+);
+
+4. Use Tailwind’s @apply Sparingly
+Avoid @apply in CSS Modules unless you’re creating theme tokens:
+
+css
+/* DON’T do this often */
+.primaryBtn {
+  @apply bg-blue-600 text-white px-4 py-2 rounded;
+}
+
+Instead, prefer inline Tailwind classes for clarity and tooling support.
+
+5. Export Components via Index Files
+js
+// src/components/Button/index.js
+export { default } from './Button';
+
+Then import cleanly:
+
+js
+import Button from '@/components/Button';
+       

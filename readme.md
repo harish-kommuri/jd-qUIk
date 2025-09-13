@@ -1,24 +1,16 @@
-RAG based to respond based on context of requirement.
+RAG based to generative model to respond to Web development context.
 
-Model picked for generate code from Prompt
-https://ollama.com/library/qwen3-coder
+### Model picked for generate code from Prompt
+qwen3-coder:32b
 
-Model picked for generation code from images (Vision model)
+### Model picked for generation code from images (Vision model)
+llama-vision
 
-
-RAG components:
-
+### RAG components:
 Embedding model -> "all-MiniLM-L6-v2" (Most popular till the day)
 Vector Store    -> Qdrent (https://qdrant.tech/documentation/quickstart)
+Generative Model -> 
 
-
-Containerization:
-
-Running Qdrent locally:
-
-docker pull qdrant/qdrant
-docker run -p 6333:6333 -p 6334:6334 \
-    -v "$(pwd)/quik_qdrant:/qdrant/storage:z" \
-    qdrant/qdrant
-
-
+### Containerization:
+```// Make sure docker installed
+    docker compose build```

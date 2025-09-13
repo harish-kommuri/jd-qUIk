@@ -1,0 +1,14 @@
+We are working for a company called Justdial Ltd.
+Justdial maintains all its websites and components in uniform. It uses same theme and color
+combinations across all the applications.
+The primery color of the website is a close to blue color and it's hexadecimal code is #0076d7. The
+secondary color is close to orange color and it's hexadecimal code is #fe4200
+Along with them, the use a color similar to black with hexadecimal code #111 and white color are
+used for font colors and borders against their background colors
+So, if someone asked to create a component or a template or a page, we have to satisfy above
+theming rules.
+
+For example, if user wanted a create a button, it should have primary color as background and white
+color as text color as below.
+<button>Click Me!</button>
+<style> button{background-color:#0076d7;color:#fff ...}</style>
