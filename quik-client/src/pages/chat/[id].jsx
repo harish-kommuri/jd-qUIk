@@ -134,7 +134,7 @@ const ChatPage = () => {
             formData.append("img", img)
         }
 
-        const resp = await xhr.post(apiBasePath + "/ragc/" + chatId, formData);
+        const resp = await xhr.post(`${apiBasePath}/ragc/${chatId}/xhr_to_gpu`, formData);
 
         console.log(resp.data);
 
