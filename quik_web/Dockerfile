@@ -2,6 +2,7 @@ FROM node:20-alpine AS deps
 
 WORKDIR /quik-client
 COPY package.json ./
+RUN npm install
 
 
 
