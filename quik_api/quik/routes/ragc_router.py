@@ -26,6 +26,7 @@ ragc_router = APIRouter(
 
 @ragc_router.post("/{chatid}")
 async def xhr_chat(
+    chatid: str,
     type: str = Form(default="text"),
     query: str = Form(default=None),
     img: UploadFile = File
@@ -34,10 +35,10 @@ async def xhr_chat(
         if query == None:
             return { "answer": "", "ok": 0, "msg": "Please provide a query." }
 
-        answer = text_prompt_handler(query)
+        answer = text_prompt_handler(chatid, query)
         return { "answer": answer, "ok": 1 }
     elif type == "image":
-        resp = await text_prompt_handler(img, query)
+        resp = await image_prompt_handler(chatid, img, query)
         return { "answer": resp, "ok": 1 }
     else:
         return { "answer": None, "msg": "Invalid type given", "ok": 0 }
