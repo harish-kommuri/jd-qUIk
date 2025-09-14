@@ -12,3 +12,4 @@ faiss-cpu
 PyPDF2==3.0.1
 langchain-ollama
 langchain-huggingface
+qdrant-client==1.15.1

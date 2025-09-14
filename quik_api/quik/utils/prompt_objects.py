@@ -35,7 +35,7 @@ def create_prompt_object(role: str, paramsobj):
     images = paramsobj.get("images", [])
     _type = paramsobj.get("type", "")
 
-    if _type == "ollama":
+    if _type != "curl_based":
         return ollama_obj(role, content, images)
     else:
         return curl_call_obj(role, content, images)

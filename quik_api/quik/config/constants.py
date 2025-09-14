@@ -1,19 +1,4 @@
-
-models_list = {
-    "exaone-deep": {
-        "modelpath": "LGAI-EXAONE/EXAONE-Deep-7.8B",
-    },
-    "deepseek-coder": {
-        "modelpath": "deepseek-ai/DeepSeek-Coder-V2-Base"
-    },
-    "qwen3-coder": {
-        "modelpath": "Qwen/Qwen3-Coder-30B-A3B-Instruct"
-    }
-}
-
 llm_model = "qwen3-coder:30b"
-llm_vision_model = "qwen3:32b"
+llm_vision_model = "llama3.2-vision:11b"
 embedding_model = "all-MiniLM-L6-v2"
-
-
 gpu_server_llm = "Qwen/Qwen2-VL-7B-Instruct-AWQ"
