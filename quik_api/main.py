@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # from quik.routes.chat_router import chat_router
 from quik.routes.ragc_router import ragc_router
+from quik.routes.auth_router import auth_router
 
 app = FastAPI()
 
@@ -16,4 +17,5 @@ app.add_middleware(
 
 
 # app.include_router(chat_router)
+app.include_router(auth_router)
 app.include_router(ragc_router)

@@ -3,16 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
-    "start": "next start",
-    "lint": "eslint"
+    "dev": "export BUILD_ID=$(git rev-parse HEAD) && env-cmd -f ./env/env.development.json next dev --turbopack",
+    "build:staging": "export BUILD_ID=$(git rev-parse HEAD) && env-cmd -f ./env/env.staging.json next build",
+    "build:production": "export BUILD_ID=$(git rev-parse HEAD) && env-cmd -f ./env/env.production.json next build",
+    "start:staging": "export BUILD_ID=$(git rev-parse HEAD) && env-cmd -f ./env/env.staging.json next start -p 5680",
+    "start:production": "export BUILD_ID=$(git rev-parse HEAD) && env-cmd -f ./env/env.production.json next start -p 5679"
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
     "@reduxjs/toolkit": "^2.9.0",
     "antd": "^5.27.3",
     "axios": "^1.11.0",
+    "env-cmd": "^11.0.0",
     "next": "15.5.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",

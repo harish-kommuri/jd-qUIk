@@ -1,20 +1,34 @@
-import { useRouter } from "next/router"
+import React from "react";
+
+import { apiBasePath } from "@qUIk-UI/constants";
+import { parseQueryParams } from "@qUIk-UI/utils/qs/parse";
+import xhr from "@qUIk-UI/utils/xhr";
+
 
 const ZeplinLoginRedirect = () => {
-    const router = useRouter()
+    const [message, setMessage] = React.useState("Login in progress... Please wait...")
+
+    React.useEffect(() => {
+        const qs = window.location.search || "";
+        const qsObj = parseQueryParams(qs)
+
+        if (qsObj.code) {
+            getTokenData(qsObj.code);
+        }
+    }, []);
+
+    const getTokenData = async (code) => {
+        try {
+            const { data } = await xhr.get(apiBasePath + "/auth/zeplin?code=" + code);
+            setMessage(data.msg);
+        } catch (e) {
+            console.log(e);
+            setMessage("Something went wrong. Please try again.");
+        }
+    }
 
     return (
-        <div>
-            <dl>
-            {Object.entries(router.query).map(([key, value]) => {
-                return (
-                    <>
-                        <dd>{key}: </dd><dt>{value}</dt>
-                    </>
-                )
-            })}
-            </dl>
-        </div>
+        <div>{message}</div>
     );
 }
 
