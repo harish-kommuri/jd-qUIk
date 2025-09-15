@@ -14,11 +14,11 @@ from pathlib import Path
 from typing import Dict
 from queue import Queue
 
-from quik_config.constants import llm_model, embedding_model
+from quik.config.constants import llm_model, embedding_model
 
-abspath = str(Path.cwd().absolute())
-embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
-vectorstore = FAISS.load_local(abspath + "/model/RAG/faiss_index", embeddings, allow_dangerous_deserialization=True)
+# abspath = str(Path.cwd().absolute())
+# embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
+# vectorstore = FAISS.load_local(abspath + "/model/RAG/faiss_index", embeddings, allow_dangerous_deserialization=True)
 llm = OllamaLLM(model=llm_model)
 # qa = RetrievalQA.from_chain_type(llm=model, retriever=vectorstore.as_retriever())
 
@@ -110,7 +110,7 @@ async def xhr_chat(
 
     qa = ConversationalRetrievalChain.from_llm(
         llm,
-        retriever=vectorstore.as_retriever(),
+        # retriever=vectorstore.as_retriever(),
         memory=memory
     )
 
