@@ -10,6 +10,7 @@ services:
       - 8081:8081
     networks:
       - qdrant_vecstor
+      - mysql_db
     
   vec_store:
     image: qdrant/qdrant
@@ -20,9 +21,24 @@ services:
     networks:
       - qdrant_vecstor
 
+  mysql:
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    volumes:
+      - quik_mysql:/var/lib/mysql
+    networks:
+      - mysql_db
+
 volumes:
   quik_qdrant:
+  quik_mysql:
 
 networks:
   qdrant_vecstor:
+    driver: bridge
+  mysql_db:
     driver: bridge
