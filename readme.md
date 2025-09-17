@@ -22,3 +22,8 @@ https://api.zeplin.dev/v1/oauth/authorize?client_id=68c7b15fe6f0230a052a4bc7&res
 
 https://huggingface.co/datasets/HuggingFaceM4/WebSight
 https://huggingface.co/datasets/guardiancc/image-to-html
+
+
+export PATH="$HOME/.pyenv/bin:$PATH"
+eval "$(pyenv init --path)"
+eval "$(pyenv init -)"

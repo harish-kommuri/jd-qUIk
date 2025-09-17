@@ -1,8 +1,11 @@
+import torch
+
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from quik.config.constants import img_to_html_model
 
-model = AutoModelForCausalLM.from_pretrained(img_to_html_model, trust_remote_code=True, torch_dtype="auto")  
+img_to_html_model="HuggingFaceM4/VLM_WebSight_finetuned"
+
+model = AutoModelForCausalLM.from_pretrained(img_to_html_model, trust_remote_code=True, dtype=torch.float16)  
 tokenizer = AutoTokenizer.from_pretrained(img_to_html_model)
 
 model.save_pretrained("./tuned")
