@@ -9,6 +9,7 @@ import ollama
 from quik.utils.prompt_objects import prompt_with_history, append_agent_message
 from quik.services.prompt import get_prompt
 from quik.config.constants import llm_model, llm_vision_model
+from quik.services.generator import image_to_html
 
 uploads_path = str(Path.absolute(Path.cwd())) + "/uploads"
 
@@ -38,19 +39,23 @@ async def image_prompt_handler(chatid: str, file: UploadFile, query: str):
         
         localfile.close()
 
-        messages = prompt_with_history(chatid, "user", {
-            "content": f"""
-            "Analyse the image attached, find the web components and structure of the tempate and give response according to that."
+        generated = image_to_html(filepath, query)
 
-            Question: {query or "Please convert image to html"}
-            """,
-            "images": [filepath]
-        })
+        print(generated)
 
-        response = ollama.chat(model=llm_vision_model, messages=messages)
-        agent_message = response["message"]["content"] or ""
-        llm_resp = agent_message
-        append_agent_message(chatid, agent_message)
+        # messages = prompt_with_history(chatid, "user", {
+        #     "content": f"""
+        #     "Analyse the image attached, find the web components and structure of the tempate and give response according to that."
+
+        #     Question: {query or "Please convert image to html"}
+        #     """,
+        #     "images": [filepath]
+        # })
+
+        # response = ollama.chat(model=llm_vision_model, messages=messages)
+        # agent_message = response["message"]["content"] or ""
+        # llm_resp = agent_message
+        # append_agent_message(chatid, agent_message)
     except Exception as e:
         print("Error while reading image", e)
     finally:

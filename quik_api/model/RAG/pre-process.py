@@ -6,7 +6,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_huggingface import HuggingFaceEmbeddings
 
-from quik_config.constants import embedding_model
+from quik.config.constants import embedding_model
 
 embeddings = HuggingFaceEmbeddings(model_name=embedding_model)
 pdf_folder_path = str(Path.joinpath(Path.cwd(), "data"))
