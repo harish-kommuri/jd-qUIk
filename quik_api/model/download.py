@@ -3,6 +3,7 @@
 # import torch
 from pathlib import Path
 import os
+import kagglehub
 
 model_path = str(Path.cwd()) + "/finetuned"
 os.environ["KAGGLE_HUB_CACHE_DIR"] = model_path
@@ -39,9 +40,6 @@ print(model_path)
 
 # model.save_pretrained(model_path)
 # tokenizer.save_pretrained(model_path)
-
-
-import kagglehub
 
 path = kagglehub.model_download("Microsoft/phi-3/pyTorch/phi-3.5-vision-instruct", )
 
