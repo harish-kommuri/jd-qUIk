@@ -21,3 +21,4 @@ peft==0.17.1
 bitsandbytes==0.42.0
 backoff==2.2.1
 kagglehub==0.3.13
+sentencepiece==0.2.1

@@ -5,7 +5,7 @@ from pathlib import Path
 import os
 import kagglehub
 
-model_path = str(Path.cwd()) + "/finetuned"
+model_path = str(Path.cwd())
 os.environ["KAGGLE_HUB_CACHE_DIR"] = model_path
 
 print(model_path)

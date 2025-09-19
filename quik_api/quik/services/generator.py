@@ -2,30 +2,38 @@ import torch
 
 from PIL import Image
 from pathlib import Path
-from transformers import AutoModelForCausalLM, AutoProcessor
+from transformers import AutoModelForCausalLM, AutoProcessor, AutoConfig
+import os
+os.environ["DISABLE_FLASH_ATTN"] = "1"
+
 
 # from quik.config.constant s import img_to_html_model
 
-img_to_html_model = str(Path.cwd()) + "/model/tuned"
-device = "mps"
+# img_to_html_model = str(Path.cwd()) + "/model/microsoft/phi-3.5-vision-instruct"
+# img_to_html_model = "HuggingFaceM4/VLM_WebSight_finetuned"
+img_to_html_model = "microsoft/Phi-4-multimodal-instruct"
 
-PROCESSOR = AutoProcessor.from_pretrained(
+device = torch.device("mps")
+auto_config = AutoConfig.from_pretrained(img_to_html_model, trust_remote_code=True)
+
+processor = AutoProcessor.from_pretrained(
     img_to_html_model
 )
 
-MODEL = AutoModelForCausalLM.from_pretrained(
-    img_to_html_model,
-    trust_remote_code=True,
-    dtype=torch.float16,
-    device_map=device,
-    attn_implementation="eager"
-)
+
+print(auto_config)
+
+model = AutoModelForCausalLM.from_pretrained(
+    auto_config,
+    attn_implementation="eager",
+    trust_remote_code=True
+).to(device)
 
 def image_to_html(filepath: str, prompt: str = ""):
     image = Image.open(filepath)
     full_prompt = f"<image>\nUSER: {prompt}\nASSISTANT:"
 
-    inputs = PROCESSOR(text=full_prompt, images=image, return_tensors="pt").to(device)
+    inputs = processor(text=full_prompt, images=image, return_tensors="pt").to(device)
     print(inputs['image_attention_mask'])
 
     if "image_attention_mask" in inputs:
@@ -33,16 +41,16 @@ def image_to_html(filepath: str, prompt: str = ""):
 
     print(inputs.keys())
 
-    outputs = MODEL.generate(
+    outputs = model.generate(
         **inputs,
         max_new_tokens=50,
         do_sample=False,
         use_cache=False,      # ← helps avoid some MPS bugs
-        pad_token_id=PROCESSOR.tokenizer.pad_token_id or PROCESSOR.tokenizer.eos_token_id,
+        pad_token_id=processor.tokenizer.pad_token_id or processor.tokenizer.eos_token_id,
     )
 
     print(outputs)
 
     image.close()
 
-    return PROCESSOR.batch_decode(outputs, skip_special_tokens=True)
+    return processor.batch_decode(outputs, skip_special_tokens=True)
